@@ -651,6 +651,13 @@ fn native_options(
         // interval and frames ran unpaced. OpenGL elsewhere.
         #[cfg(target_os = "macos")]
         renderer: eframe::Renderer::Wgpu,
+        // One frame in flight rather than two: Metal then keeps two window
+        // images instead of three, a window-sized buffer less while idle.
+        // egui's frames take far less than a refresh, so the display still
+        // gets one each time.
+        #[cfg(target_os = "macos")]
+        wgpu_options: eframe::egui_wgpu::WgpuConfiguration::default()
+            .with_surface_config(eframe::egui_wgpu::SurfaceConfig::LOW_LATENCY),
         ..Default::default()
     }
 }
